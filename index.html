@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رشاقة</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0F8F7E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="رشاقة">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F7F5;--card:#fff;--ink:#12302B;--mute:#5E7771;--acc:#0F8F7E;--on:#fff;--line:#D5E3DE;--bad:#C0392B}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1D1A;--card:#162B27;--ink:#E6F2EE;--mute:#8FAAA3;--acc:#3CC5B1;--on:#0E1D1A;--line:#274540;--bad:#FF7B6B}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;line-height:1.7;padding-top:env(safe-area-inset-top,0px)}
+main{max-width:520px;margin:0 auto;padding:16px 16px 90px}
+h1{font-size:1.6rem;margin:6px 0 2px}h2{font-size:1.05rem;margin:0 0 10px}
+.sub{color:var(--mute);margin:0 0 14px;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mute);font:inherit;padding:12px 4px;font-weight:500;cursor:pointer}
+nav button[aria-selected="true"]{color:var(--acc);font-weight:700;box-shadow:inset 0 3px 0 var(--acc)}
+label{display:block;font-size:.85rem;color:var(--mute);margin:8px 0 3px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{width:100%;border:0;border-radius:10px;background:var(--acc);color:var(--on);font:inherit;font-weight:700;padding:11px;margin-top:10px;cursor:pointer}
+.link{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;margin-top:10px;padding:4px}
+.big{font-size:2.6rem;font-weight:700;line-height:1.1}
+.bar{height:12px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:var(--acc);transition:width .3s}.bar.over i{background:var(--bad)}
+.meta{display:flex;justify-content:space-between;color:var(--mute);font-size:.88rem}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
+.item small{color:var(--mute);display:block}
+.x{border:0;background:none;color:var(--bad);font:inherit;cursor:pointer;padding:6px 10px}
+.cups{display:flex;gap:6px;flex-wrap:wrap}
+.cups button{width:34px;height:42px;border-radius:4px 4px 10px 10px;border:2px solid var(--acc);background:none;cursor:pointer}.cups button.on{background:var(--acc)}
+.empty{color:var(--mute);text-align:center;padding:10px}.hide{display:none}
+#msg{color:var(--bad);font-size:.88rem;min-height:1.4em;margin-top:8px}
+svg{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<main>
+<div id="boot" class="empty" style="padding:60px 0">جاري التحميل…</div>
+<section id="auth" class="hide">
+  <h1>رشاقة</h1><p class="sub">سجّل دخولك حتى تنحفظ بياناتك وتوصلها من أي جهاز</p>
+  <div class="card">
+    <label for="em">الإيميل</label><input id="em" type="email" autocomplete="email" dir="ltr">
+    <label for="pw">كلمة السر (6 أحرف أو أكثر)</label><input id="pw" type="password" autocomplete="current-password" dir="ltr">
+    <button class="btn" id="signin">دخول</button>
+    <button class="link" id="signup">أنشئ حساب جديد</button>
+    <button class="link" id="forgot">نسيت كلمة المرور؟</button>
+    <div id="msg" role="alert"></div>
+  </div>
+  <div class="card hide" id="rec">
+    <h2>كلمة سر جديدة</h2>
+    <label for="np">اكتب كلمة السر الجديدة (6 أحرف أو أكثر)</label><input id="np" type="password" autocomplete="new-password" dir="ltr">
+    <button class="btn" id="saveNp">حفظ ودخول</button>
+    <div id="msg2" role="alert" style="color:var(--bad);font-size:.88rem;margin-top:8px"></div>
+  </div>
+</section>
+
+<section id="app" class="hide">
+<div class="row" style="align-items:center"><h1>رشاقة</h1><button class="link" id="out" style="flex:0 0 auto;margin:0">خروج</button></div>
+<p class="sub" id="date"></p>
+
+<section id="t-today">
+  <div class="card">
+    <div class="meta"><span>السعرات اليوم</span><span id="goalTxt"></span></div>
+    <div class="big"><span id="eaten">0</span> <small style="font-size:1rem;font-weight:400">سعرة</small></div>
+    <div class="bar" id="bar"><i style="width:0"></i></div>
+    <div class="meta"><span id="left"></span><span>بروتين: <b id="prot">0</b> غ</span></div>
+  </div>
+  <div class="card">
+    <h2>أضف أكلة</h2>
+    <select id="food" aria-label="الأكلة"></select>
+    <label for="qty">عدد الحصص</label><input id="qty" type="number" value="1" min="0.5" step="0.5" inputmode="decimal">
+    <button class="btn" id="addFood">أضف</button>
+    <p class="sub" style="margin:8px 0 0;font-size:.8rem">القيم تقريبية للحصة المذكورة.</p>
+  </div>
+  <div class="card"><h2>وجبات اليوم</h2><div id="list"></div></div>
+  <div class="card"><h2>الماء</h2><div class="cups" id="cups"></div><p class="sub" style="margin:8px 0 0" id="waterTxt"></p></div>
+  <div class="card"><h2>تذكير تليغرام</h2>
+    <p class="sub" id="tgTxt" style="margin:0">يوصلك ملخص يومي بالسعرات والماء على تليغرام.</p>
+    <button class="btn" id="tgLink">اربط تليغرام</button>
+    <div id="tgCode" style="margin-top:10px;font-weight:700" dir="ltr"></div>
+  </div>
+</section>
+
+<section id="t-calc" class="hide">
+  <div class="card">
+    <h2>احسب سعراتك</h2>
+    <div class="row">
+      <div><label for="sex">الجنس</label><select id="sex"><option value="m">ذكر</option><option value="f">أنثى</option></select></div>
+      <div><label for="age">العمر</label><input id="age" type="number" inputmode="numeric"></div>
+    </div>
+    <div class="row">
+      <div><label for="h">الطول (سم)</label><input id="h" type="number" inputmode="numeric"></div>
+      <div><label for="w">الوزن (كغم)</label><input id="w" type="number" inputmode="decimal"></div>
+    </div>
+    <label for="act">النشاط</label>
+    <select id="act"><option value="1.2">قليل (جلوس أغلب اليوم)</option><option value="1.375">خفيف (رياضة 1-3 أيام)</option><option value="1.55">متوسط (رياضة 3-5 أيام)</option><option value="1.725">عالي (رياضة يومية)</option></select>
+    <label for="goal">الهدف</label>
+    <select id="goal"><option value="-500">نزول وزن (حوالي نص كيلو بالأسبوع)</option><option value="0">ثبات الوزن</option><option value="300">زيادة وزن</option></select>
+    <button class="btn" id="calc">احسب واعتمد</button>
+  </div>
+  <div class="card hide" id="res"><div class="meta"><span>سعراتك اليومية</span></div><div class="big" id="resKcal"></div><p class="sub" id="resTxt" style="margin:6px 0 0"></p></div>
+</section>
+
+<section id="t-weight" class="hide">
+  <div class="card"><h2>سجّل وزنك</h2>
+    <div class="row"><input id="wIn" type="number" inputmode="decimal" step="0.1" placeholder="كغم" aria-label="الوزن"><button class="btn" id="addW" style="margin:0">سجّل</button></div>
+  </div>
+  <div class="card"><h2>التقدم</h2><div id="chart"></div><div id="wList"></div></div>
+</section>
+</section>
+</main>
+<nav id="nav" role="tablist" class="hide">
+  <button role="tab" data-t="today" aria-selected="true">اليوم</button>
+  <button role="tab" data-t="calc" aria-selected="false">الحاسبة</button>
+  <button role="tab" data-t="weight" aria-selected="false">الوزن</button>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const sb=supabase.createClient("https://zifkgtfwmzpsphdstsew.supabase.co","sb_publishable_dEsAFjxuNye6zKPm657pxQ_kNtdsFIi");
+const FOODS=[["تمن أبيض","طبق 200غ",260,5],["مرق باميا","طبق",180,8],["مرق فاصولياء","طبق",220,10],["مرق باذنجان","طبق",200,6],["دولمة","6 حبات",330,12],["كباب مشوي","3 أسياخ",380,28],["سمك مسكوف","200غ",340,38],["دجاج مشوي","صدر 150غ",250,40],["برياني دجاج","طبق",520,25],["كبة","حبتين",300,12],["شوربة عدس","طبق",200,12],["صمونة","رغيف",260,8],["خبز تنور","رغيف",180,6],["بيض مسلوق","حبة",78,6],["لبن عيران","كوب",70,4],["سلطة خضار","طبق",60,2],["تمر","3 حبات",200,1],["قيمر وعسل","حصة",350,4],["شاي بسكر","استكان",30,0]];
+const $=id=>document.getElementById(id);
+const d=new Date(),today=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+$("date").textContent=d.toLocaleDateString("ar-IQ",{weekday:"long",day:"numeric",month:"long"});
+$("food").innerHTML=FOODS.map((f,i)=>`<option value="${i}">${f[0]} — ${f[1]} (${f[2]} سعرة)</option>`).join("");
+let S={target:null,log:[],water:0,weights:[]};
+
+async function load(){
+  const [p,l,w,ws]=await Promise.all([
+    sb.from("rq_profiles").select("target_kcal").maybeSingle(),
+    sb.from("rq_food_logs").select("*").eq("log_date",today).order("id"),
+    sb.from("rq_water").select("cups").eq("log_date",today).maybeSingle(),
+    sb.from("rq_weights").select("log_date,kg").order("log_date")
+  ]);
+  S.target=p.data?p.data.target_kcal:null;S.log=l.data||[];S.water=w.data?w.data.cups:0;S.weights=ws.data||[];
+  render();
+}
+function render(){
+  const kcal=Math.round(S.log.reduce((a,x)=>a+x.kcal*x.qty,0)),prot=Math.round(S.log.reduce((a,x)=>a+x.protein*x.qty,0)),t=S.target;
+  $("eaten").textContent=kcal;$("prot").textContent=prot;
+  $("goalTxt").textContent=t?"الهدف "+t:"حدد هدفك من الحاسبة";
+  $("bar").firstElementChild.style.width=(t?Math.min(100,kcal/t*100):0)+"%";
+  $("bar").classList.toggle("over",!!t&&kcal>t);
+  $("left").textContent=t?(kcal>t?"زدت "+(kcal-t)+" سعرة":"باقي "+(t-kcal)+" سعرة"):"";
+  $("list").innerHTML=S.log.length?S.log.map(x=>`<div class="item"><div>${x.name}<small>${x.qty} × ${x.serving} · ${Math.round(x.kcal*x.qty)} سعرة</small></div><button class="x" data-id="${x.id}">حذف</button></div>`).join(""):'<div class="empty">ما أضفت شي لليوم</div>';
+  $("cups").innerHTML=Array.from({length:8},(_,i)=>`<button class="${i<S.water?"on":""}" data-c="${i+1}" aria-label="كوب ${i+1}"></button>`).join("");
+  $("waterTxt").textContent=S.water+" من 8 أكواب";
+  const ws=S.weights;
+  if(!ws.length){$("chart").innerHTML='<div class="empty">سجّل أول وزن لتبدأ الرسم</div>';$("wList").innerHTML="";return}
+  if(ws.length>1){const v=ws.map(x=>+x.kg),mn=Math.min(...v)-1,mx=Math.max(...v)+1,W=320,H=140;
+    const pts=ws.map((x,i)=>[10+i*(W-20)/(ws.length-1),H-10-(x.kg-mn)/(mx-mn)*(H-20)]);
+    $("chart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="رسم الوزن"><polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="${pts.map(p=>p.join(",")).join(" ")}"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--acc)"/>`).join("")}</svg>`}else $("chart").innerHTML="";
+  const df=(ws[ws.length-1].kg-ws[0].kg).toFixed(1);
+  $("wList").innerHTML=(ws.length>1?`<p class="sub">التغيير من أول تسجيل: <b>${df>0?"+":""}${df} كغم</b></p>`:"")+ws.slice().reverse().slice(0,10).map(x=>`<div class="item"><span>${x.log_date}</span><b>${+x.kg} كغم</b></div>`).join("");
+}
+
+$("addFood").onclick=async()=>{const f=FOODS[$("food").value],q=parseFloat($("qty").value)||1;
+  const {data}=await sb.from("rq_food_logs").insert({log_date:today,name:f[0],serving:f[1],kcal:f[2],protein:f[3],qty:q}).select().single();
+  if(data){S.log.push(data);render()}};
+$("list").onclick=async e=>{const id=e.target.dataset.id;if(!id)return;await sb.from("rq_food_logs").delete().eq("id",id);S.log=S.log.filter(x=>x.id!=id);render()};
+$("cups").onclick=async e=>{const c=+e.target.dataset.c;if(!c)return;const n=S.water===c?c-1:c;
+  const {data:{user}}=await sb.auth.getUser();
+  const {error}=await sb.from("rq_water").upsert({user_id:user.id,log_date:today,cups:n});if(!error){S.water=n;render()}};
+$("addW").onclick=async()=>{const v=parseFloat($("wIn").value);if(!v||v<20||v>300)return;
+  const {data:{user}}=await sb.auth.getUser();
+  const {error}=await sb.from("rq_weights").upsert({user_id:user.id,log_date:today,kg:v});
+  if(!error){$("wIn").value="";const i=S.weights.findIndex(x=>x.log_date===today);if(i>-1)S.weights[i].kg=v;else S.weights.push({log_date:today,kg:v});render()}};
+$("calc").onclick=async()=>{const a=+$("age").value,h=+$("h").value,w=+$("w").value;
+  $("res").classList.remove("hide");
+  if(!a||!h||!w){$("resKcal").textContent="";$("resTxt").textContent="عبّي العمر والطول والوزن.";return}
+  const sex=$("sex").value,bmr=10*w+6.25*h-5*a+(sex==="m"?5:-161);
+  let t=Math.round((bmr*$("act").value+ +$("goal").value)/10)*10;const fl=sex==="m"?1500:1200,cl=t<fl;if(cl)t=fl;
+  const {data:{user}}=await sb.auth.getUser();
+  await sb.from("rq_profiles").upsert({user_id:user.id,sex,age:a,height_cm:h,activity:+$("act").value,goal:+$("goal").value,target_kcal:t,updated_at:new Date().toISOString()});
+  S.target=t;$("resKcal").textContent=t+" سعرة";
+  $("resTxt").textContent="معدل الحرق الأساسي حوالي "+Math.round(bmr)+" سعرة."+(cl?" رفعنا الرقم للحد الأدنى الآمن.":"")+" هذا تقدير عام، ولأي حالة مرضية أو حمل استشر طبيبك.";render()};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["today","calc","weight"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t))});
+
+const show=on=>{$("auth").classList.toggle("hide",on);$("app").classList.toggle("hide",!on);$("nav").classList.toggle("hide",!on)};
+const creds=()=>({email:$("em").value.trim(),password:$("pw").value});
+$("signin").onclick=async()=>{$("msg").textContent="";try{const {error}=await sb.auth.signInWithPassword(creds());if(error)$("msg").textContent="خطأ: "+error.message+(error.status?" ("+error.status+")":"")}catch(e){$("msg").textContent="ما كدرت أوصل لـ Supabase: "+e.message}};
+$("signup").onclick=async()=>{$("msg").textContent="";try{const {data,error}=await sb.auth.signUp(creds());
+  if(error)$("msg").textContent="ما تم إنشاء الحساب: "+error.message+(error.status?" ("+error.status+")":"");
+  else if(!data.session)$("msg").textContent="راجع إيميلك وفعّل الحساب، بعدها سجّل دخول."}catch(e){$("msg").textContent="ما كدرت أوصل لـ Supabase: "+e.message}};
+$("tgLink").onclick=async()=>{
+  const code=Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
+  const {data:{user}}=await sb.auth.getUser();
+  const {error}=await sb.from("rq_telegram_links").upsert({user_id:user.id,link_code:code,enabled:true});
+  if(error){$("tgTxt").textContent="خطأ: "+error.message;return}
+  $("tgTxt").textContent="افتح بوت رشاقة بتليغرام وارسل له هذي الرسالة:";
+  $("tgCode").textContent="/start "+code};
+$("out").onclick=()=>sb.auth.signOut();
+$("forgot").onclick=async()=>{const email=$("em").value.trim();
+  if(!email){$("msg").style.color="var(--bad)";$("msg").textContent="اكتب إيميلك أول شي، وبعدها اضغط نسيت كلمة المرور.";return}
+  try{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});
+    $("msg").style.color=error?"var(--bad)":"var(--acc)";
+    $("msg").textContent=error?"خطأ: "+error.message+(error.status?" ("+error.status+")":""):"إذا الإيميل مسجّل، راح توصلك رسالة فيها رابط تغيير كلمة السر. راجع الوارد والسبام."}
+  catch(e){$("msg").style.color="var(--bad)";$("msg").textContent="ما كدرت أوصل لـ Supabase: "+e.message}};
+$("saveNp").onclick=async()=>{const p=$("np").value;
+  if(p.length<6){$("msg2").textContent="كلمة السر لازم 6 أحرف أو أكثر.";return}
+  const {error}=await sb.auth.updateUser({password:p});
+  if(error){$("msg2").textContent="خطأ: "+error.message;return}
+  recovering=false;$("rec").classList.add("hide");location.hash="";show(true);load()};
+let recovering=/type=recovery/.test(location.hash);
+function showRec(){recovering=true;show(false);$("rec").classList.remove("hide")}
+sb.auth.onAuthStateChange((e,s)=>{
+  if(e==="PASSWORD_RECOVERY"||recovering){showRec();return}
+  // لا نستدعي Supabase مباشرة داخل هذا الـ callback (يسبب تعليق بعد فترة خمول)
+  setTimeout(()=>{if(s){show(true);load()}else show(false)},0)});
+async function init(){
+  try{
+    const r=await Promise.race([sb.auth.getSession(),new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),6000))]);
+    if(!recovering){if(r.data.session){show(true);load()}else show(false)}
+  }catch(e){if(!recovering)show(false)}
+  $("boot").classList.add("hide")}
+init();
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible"||recovering)return;
+  sb.auth.getSession().then(({data})=>{if(data.session){show(true);load()}else show(false)}).catch(()=>{})});
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
